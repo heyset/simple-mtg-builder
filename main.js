@@ -5,18 +5,23 @@ const buildResults = document.getElementById('build-results');
 
 class Card {
   constructor(data, type) {
-    const { image_uris } = data;
+    const { image_uris, name } = data;
+    this.name = name;
     if (!image_uris) return;
 
     this.images = [image_uris.small, image_uris.large];
-    this.buildElement();
   }
 
-  buildElement() {
+  render() {
+    if (!this.images) {
+      return document.createTextNode('');
+    }
+
     const listElement = document.createElement('li');
     listElement.dataset.largerUrl = this.images[1];
-    listElement.innerHTML = `<img src=${this.images[0]} />`;
+    listElement.innerHTML = `<img src=${this.images[0]} alt="${this.name}" />`;
     this.htmlElement = listElement;
+    return this.htmlElement;
   }
 }
 
@@ -26,17 +31,17 @@ function getAPIResults(searchTerm) {
     fetch(`${baseUrl}/search?order=cmc&q=${encodedSearchTerm}`)
       .then((response) => response.json())
       .then((jsonData) => resolve(jsonData.data))
-    .catch((err) => resolve(err));
+    .catch((err) => reject(err));
   })
 }
+
+document.querySelector('.status-text').style.display = 'none';
 
 getAPIResults('color=blue')
 .then((apiList) => {
   console.log(apiList);
   apiList.forEach((cardData) => {
     const newCard = new Card(cardData);
-    if (newCard.htmlElement) {
-      buildResults.appendChild(newCard.htmlElement);
-    }
+    buildResults.appendChild(newCard.render());
   });
 });
