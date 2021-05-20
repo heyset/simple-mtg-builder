@@ -179,7 +179,7 @@ class Deck {
   }
 
   getPlainList() {
-    let plainText = '';
+    let plainText = `${this.deckTitleElement.value}\r\n\r\n`
 
     Object.values(this.list).forEach((cardListing) => {
       plainText += `${cardListing.count}x ${cardListing.card.name}\r\n`;
@@ -188,11 +188,14 @@ class Deck {
     return plainText;
   }
 
-  getDataArray() {
-    const deckArray = [];
+  getDataObject() {
+    const deckObject = {
+      title: this.deckTitleElement.value,
+      list: [],
+    }
     
     Object.values(this.list).forEach((cardListing) => {
-      deckArray.push({
+      deckObject.list.push({
         count: cardListing.count,
         cardData: {
           name: cardListing.card.name,
@@ -203,7 +206,7 @@ class Deck {
       });
     });
     
-    return deckArray;
+    return deckObject;
   }
 
   renderSublist(card) {
@@ -263,13 +266,13 @@ function downloadFile(name, textFileFormat, content) {
 
   const data = new Blob([content], {type: `text/${encoding}`});
   
-  if (downloadFile) {
-    window.URL.revokeObjectURL(downloadFile);
+  if (downloadFileUrl) {
+    window.URL.revokeObjectURL(downloadFileUrl);
   }
 
-  downloadFile = window.URL.createObjectURL(data);
+  downloadFileUrl = window.URL.createObjectURL(data);
   const downloadAnchor = document.createElement('a');
-  downloadAnchor.setAttribute('href', downloadFile);
+  downloadAnchor.setAttribute('href', downloadFileUrl);
   downloadAnchor.setAttribute('download', `${name}.${textFileFormat}`);
 
   document.body.appendChild(downloadAnchor);
@@ -278,9 +281,9 @@ function downloadFile(name, textFileFormat, content) {
 }
 
 deckOptionsElement.querySelector('#save-json').addEventListener('click', () => {
-  const array = deck.getDataArray();
+  const deckObject = deck.getDataObject();
   
-  downloadFile('deck', 'json', JSON.stringify(array));
+  downloadFile('deck', 'json', JSON.stringify(deckObject));
 });
 
 deckOptionsElement.querySelector('#save-text').addEventListener('click', () => {
