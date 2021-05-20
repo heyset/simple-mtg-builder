@@ -2,6 +2,12 @@ html, body {
   height: 100%;
 }
 
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 body {
   background-color: rgb(30, 10, 20);
   color: #efefef;
@@ -34,12 +40,35 @@ main {
   flex-grow: 1;
   background-color: rgb(60, 25, 40);
   padding: 80px 40px;
+  display: flex;
+  gap: 40px;
+}
+
+#deck {
+  flex: 1;
+}
+
+#build {
+  flex: 3;
 }
 
 #build > h2 {
   text-align: center;
   font-weight: 400;
   padding: 40px 0;
+}
+
+#build-options {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#search-field {
+  width: 50%;
+  border: none;
+  padding: 12px;
+  border-radius: 4px;
 }
 
 ol {
@@ -49,15 +78,41 @@ ol {
 #search-results {
   display: flex;
   flex-flow: row wrap;
+  justify-content: center;
   gap: 12px;
 }
 
 #search-results > .card {
   cursor: pointer;
+  width: 146px;
+  height: 204px;
 }
 
 #search-results > .card:hover {
   box-shadow: 0 0 8px rgb(140, 120, 210, 0.8);
+}
+
+#search-results > .status-text {
+  text-align: center;
+}
+
+#modal {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+#modal > #backdrop {
+  position: absolute;
+  width: 100%;
+  padding: 100%;
+  z-index: 10;
+}
+
+#modal > img {
+  height: 70%;
+  z-index: 11;
 }
 
 footer {
