@@ -12,6 +12,10 @@ p {
   margin-bottom: 24px;
 }
 
+input {
+  margin-bottom: 24px;
+}
+
 body {
   background-color: rgb(30, 10, 20);
   color: #efefef;
@@ -86,6 +90,8 @@ main {
   display: flex;
   flex-direction: column;
   align-items: center;
+  border:2px solid rgb(30, 10, 20);
+  padding: 24px 0;
 }
 
 #search-field {
