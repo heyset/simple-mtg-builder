@@ -2,7 +2,11 @@ const baseUrl = 'https://api.scryfall.com/cards'
 
 const searchResultsElement = document.getElementById('search-results');
 
-// <li class="status-text">Your search results will appear here.</li>
+searchResultsElement.addEventListener('contextmenu', (e) => e.preventDefault());
+
+function clearSearchResults() {
+  searchResultsElement.innerHTML = '';
+}
 
 class Modal {
   constructor(htmlElement) {
@@ -24,34 +28,70 @@ class Modal {
   }
 }
 
-const modal = new Modal(document.getElementById('modal'));
-
 class Card {
+  isBasicLand = false;
+
+  renders = {
+    deckList: () => {
+      const element = document.createElement('li');
+      element.className = 'card';
+      element.innerHTML = `<img src=${this.images[0]} alt="${this.name}" />`;
+      element.addEventListener('click', this.handleLeftClick.bind(this));
+      element.addEventListener('contextmenu', this.handleAlternateRightClick.bind(this));
+      return element;
+    },
+    searchResult: () => {
+      const element = document.createElement('li');
+      element.className = 'card';
+      element.innerHTML = `<img src=${this.images[0]} alt="${this.name}" />`;
+      element.addEventListener('click', this.handleLeftClick.bind(this));
+      element.addEventListener('contextmenu', this.handleRightClick.bind(this));
+      return element;
+    },
+  }
+
   constructor(data, options) {
-    const { image_uris, name } = data;
+    const { image_uris, name, id, type_line } = data;
     this.name = name;
+    this.id = id;
+
+    if (/Basic Land/.test(type_line)) {
+      this.isBasicLand = true;
+    }
+
     if (!image_uris) return;
-    this.modal = options.modal;
+
+    if (options) {
+      this.handlers = options.handlers;
+    }
 
     this.images = [image_uris.small, image_uris.png];
   }
 
-  enlarge() {
-    this.modal.show(this.images[1]);
+  handleAlternateRightClick(e) {
+    e.preventDefault();
+    this.handlers.alternateRightClick(this);
   }
 
-  render() {
+  handleLeftClick() {
+    this.handlers.leftClick(this);
+  }
+
+  handleRightClick(e) {
+    e.preventDefault();
+    this.handlers.rightClick(this);
+  }
+
+  remove(type) {
+    this.htmlElements[type].pop().remove();
+  }
+
+  render(type) {
     if (!this.images) {
       return document.createTextNode('');
     }
 
-    const listElement = document.createElement('li');
-    listElement.className = 'card';
-    listElement.dataset.largepng = this.images[1];
-    listElement.innerHTML = `<img src=${this.images[0]} alt="${this.name}" />`;
-    listElement.addEventListener('click', this.enlarge.bind(this));
-    this.htmlElement = listElement;
-    return this.htmlElement;
+    return this.renders[type]();
   }
 }
 
@@ -65,11 +105,84 @@ function getAPIResults(searchTerm) {
   })
 }
 
-function clearSearchResults() {
-  searchResultsElement.innerHTML = '';
+const searchFieldElement = document.getElementById('search-field');
+
+const modal = new Modal(document.getElementById('modal'));
+
+function enlargeCard(card) {
+  modal.show(card.images[1]);
 }
 
-const searchFieldElement = document.getElementById('search-field');
+class Deck {
+  list = {};
+  count = 0;
+
+  constructor(htmlElement) {
+    this.htmlElement = htmlElement;
+    this.listElement = this.htmlElement.querySelector('#deck-list');
+  }
+
+  addCard(card) {
+    const cardElement = card.render('deckList');
+
+    if (!this.list[card.id]) {
+      this.renderSublist(card.id);
+    }
+
+    const cardList = this.list[card.id];
+
+    if (cardList.count === 4 && !card.isBasicLand) {
+      return;
+    }
+
+    cardList.count += 1;
+    this.updateCount(1);
+
+    const row = Math.floor(cardList.count / 8.1);
+
+    cardElement.style.zIndex = cardList.count;
+    cardElement.style.order = cardList.count;
+    cardElement.style.left = `${(cardList.count - row * 8) * 24}px`;
+    cardElement.style.top = `${row * 12}px`;
+    cardList.subList.style.height = `${204 + row * 12}px`;
+
+    cardList.subList.appendChild(cardElement);
+  }
+
+  updateCount(delta) {
+    this.count += delta;
+  }
+
+  clear() {
+    this.updateCount(this.count * -1);
+    this.listElement.innerHTML = '';
+  }
+
+  renderSublist(id) {
+    const listElement = document.createElement('li');
+    const subList = document.createElement('ul');
+
+    listElement.appendChild(subList);
+    this.list[id] = { listElement, subList, count: 0 }
+
+    this.listElement.appendChild(listElement);
+  }
+
+  removeCard(card) {
+    let cardList = this.list[card.id];
+
+    cardList.subList.lastChild.remove();
+    cardList.count -= 1;
+    this.updateCount(-1);
+
+    if(!cardList.count) {
+      cardList.listElement.remove();
+      delete this.list[card.id];
+    }
+  }
+}
+
+const deck = new Deck(document.getElementById('deck'));
 
 document.getElementById('build-options').addEventListener('submit', (e) => {
   e.preventDefault();
@@ -78,11 +191,19 @@ document.getElementById('build-options').addEventListener('submit', (e) => {
   clearSearchResults();
   const searchTerm = searchFieldElement.value;
 
-  getAPIResults(searchTerm)
+  getAPIResults(`f:modern ${searchTerm}`)
   .then((apiList) => {
+    console.log(apiList);
     apiList.forEach((cardData) => {
-      const newCard = new Card(cardData, { modal });
-      searchResultsElement.appendChild(newCard.render());
+      const newCard = new Card(cardData, {
+        handlers: {
+          leftClick: enlargeCard,
+          rightClick: deck.addCard.bind(deck),
+          alternateRightClick: deck.removeCard.bind(deck),
+        },
+      });
+
+      searchResultsElement.appendChild(newCard.render('searchResult'));
     });
   });
 });
