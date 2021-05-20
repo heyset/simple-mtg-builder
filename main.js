@@ -138,9 +138,13 @@ class Deck {
     cardList.count += 1;
     this.updateCount(1);
 
+    const row = Math.floor(cardList.count / 8.1);
+
     cardElement.style.zIndex = cardList.count;
     cardElement.style.order = cardList.count;
-    cardElement.style.left = `${cardList.count * 24}px`;
+    cardElement.style.left = `${(cardList.count - row * 8) * 24}px`;
+    cardElement.style.top = `${row * 12}px`;
+    cardList.subList.style.height = `${204 + row * 12}px`;
 
     cardList.subList.appendChild(cardElement);
   }

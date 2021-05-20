@@ -61,7 +61,6 @@ main {
 #deck-list > li > ul {
   list-style: none;
   position: relative;
-  display: flex;
   height: 204px;
 }
 
