@@ -44,21 +44,20 @@ main {
 
 ol {
   list-style: none;
+}
+
+#search-results {
   display: flex;
   flex-flow: row wrap;
   gap: 12px;
 }
 
-ol > li {
+#search-results > .card {
   cursor: pointer;
 }
 
-ol > li:hover {
+#search-results > .card:hover {
   box-shadow: 0 0 8px rgb(140, 120, 210, 0.8);
-}
-
-ol.status-text {
-  cursor: none;
 }
 
 footer {

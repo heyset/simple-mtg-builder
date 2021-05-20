@@ -18,6 +18,7 @@ class Card {
     }
 
     const listElement = document.createElement('li');
+    listElement.className = 'card';
     listElement.dataset.largerUrl = this.images[1];
     listElement.innerHTML = `<img src=${this.images[0]} alt="${this.name}" />`;
     this.htmlElement = listElement;
@@ -35,13 +36,13 @@ function getAPIResults(searchTerm) {
   })
 }
 
-document.querySelector('.status-text').style.display = 'none';
+// document.querySelector('.status-text').style.display = 'none';
 
-getAPIResults('color=blue')
-.then((apiList) => {
-  console.log(apiList);
-  apiList.forEach((cardData) => {
-    const newCard = new Card(cardData);
-    searchResults.appendChild(newCard.render());
-  });
-});
+// getAPIResults('color=blue')
+// .then((apiList) => {
+//   console.log(apiList);
+//   apiList.forEach((cardData) => {
+//     const newCard = new Card(cardData);
+//     searchResults.appendChild(newCard.render());
+//   });
+// });
