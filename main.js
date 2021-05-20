@@ -175,7 +175,6 @@ class Deck {
     this.updateCount(this.count * -1);
     this.listElement.innerHTML = '';
     this.list = {};
-    console.log(this);
   }
 
   getPlainList() {
@@ -207,6 +206,25 @@ class Deck {
     });
     
     return deckObject;
+  }
+
+  load(dataObject) {
+    this.clear();
+    this.deckTitleElement.value = dataObject.title;
+    dataObject.list.forEach((card) => {
+      for (let i = 0; i < card.count; i += 1) {
+        const newCard = new Card(null, {
+          prebuilt: card.cardData,
+          handlers: {
+            leftClick: enlargeCard,
+            rightClick: this.addCard.bind(this),
+            alternateRightClick: this.removeCard.bind(this),
+          },
+        });
+
+        this.addCard(newCard);
+      }
+    });
   }
 
   renderSublist(card) {
@@ -283,17 +301,36 @@ function downloadFile(name, textFileFormat, content) {
 deckOptionsElement.querySelector('#save-json').addEventListener('click', () => {
   const deckObject = deck.getDataObject();
   
-  downloadFile('deck', 'json', JSON.stringify(deckObject));
+  downloadFile(deck.deckTitleElement.value, 'json', JSON.stringify(deckObject));
 });
 
 deckOptionsElement.querySelector('#save-text').addEventListener('click', () => {
   const textContent = deck.getPlainList();
 
-  downloadFile('deck', 'txt', textContent);
+  downloadFile(deck.deckTitleElement.value, 'txt', textContent);
 });
 
 deckOptionsElement.querySelector('#clear-deck').addEventListener('click', () => {
   deck.clear();
+});
+
+const fileUpload = deckOptionsElement.querySelector('#json-file');
+
+deckOptionsElement.querySelector('#load-file').addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  if (fileUpload.files[0].type !== 'application/json') {
+    alert('O arquivo precisa ser .json!');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    const deckObject = JSON.parse(event.target.result);
+    deck.load(deckObject);
+  }
+
+  reader.readAsText(fileUpload.files[0]);
 })
 
 document.getElementById('build-options').addEventListener('submit', (e) => {

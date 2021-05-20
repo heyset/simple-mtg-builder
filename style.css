@@ -115,6 +115,14 @@ main {
   gap: 12px;
 }
 
+#deck-options #list-style {
+  flex: 1;
+}
+
+#deck-options #manage {
+  flex: 3;
+}
+
 #deck-options fieldset {
   padding: 20px 15px;
   display: flex;
@@ -133,6 +141,18 @@ main {
   margin-left: auto;
   margin-right: auto;
   padding: 0 12px;
+}
+
+#deck-options form {
+  display: flex;
+}
+
+#deck-options form > input {
+  flex: 3;
+}
+
+#deck-options form > button {
+  flex: 2;
 }
 
 #build {

@@ -17,7 +17,7 @@
     <section id="deck">
       <header>
         <input id="deck-title" type="text" value="My Deck">
-        <h3>Total: <span id="count">0</span></h3>
+        <h3>Total cards: <span id="count">0</span></h3>
       </header>
       <section id="deck-options">
         <fieldset id="list-style">
@@ -36,7 +36,10 @@
           <legend>Manage Deck</legend>
           <button id="save-text">Save .txt</button>
           <button id="save-json">Save .json</button>
-          <button>Load from .json</button>
+          <form id="load-file">
+            <input type="file" id="json-file" accept=".json">
+            <button type="submit">Load from .json</button>
+          </form>
           <button id="clear-deck">Clear</button>
         </fieldset>
       </section>
