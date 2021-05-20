@@ -29,6 +29,8 @@ class Modal {
 }
 
 class Card {
+  isBasicLand = false;
+
   renders = {
     deckList: () => {
       const element = document.createElement('li');
@@ -49,9 +51,14 @@ class Card {
   }
 
   constructor(data, options) {
-    const { image_uris, name, id } = data;
+    const { image_uris, name, id, type_line } = data;
     this.name = name;
     this.id = id;
+
+    if (/Basic Land/.test(type_line)) {
+      this.isBasicLand = true;
+    }
+
     if (!image_uris) return;
 
     if (options) {
@@ -108,6 +115,7 @@ function enlargeCard(card) {
 
 class Deck {
   list = {};
+  count = 0;
 
   constructor(htmlElement) {
     this.htmlElement = htmlElement;
@@ -123,13 +131,27 @@ class Deck {
 
     const cardList = this.list[card.id];
 
+    if (cardList.count === 4 && !card.isBasicLand) {
+      return;
+    }
+
     cardList.count += 1;
+    this.updateCount(1);
 
     cardElement.style.zIndex = cardList.count;
     cardElement.style.order = cardList.count;
     cardElement.style.left = `${cardList.count * 24}px`;
 
     cardList.subList.appendChild(cardElement);
+  }
+
+  updateCount(delta) {
+    this.count += delta;
+  }
+
+  clear() {
+    this.updateCount(this.count * -1);
+    this.listElement.innerHTML = '';
   }
 
   renderSublist(id) {
@@ -144,8 +166,11 @@ class Deck {
 
   removeCard(card) {
     let cardList = this.list[card.id];
+
     cardList.subList.lastChild.remove();
     cardList.count -= 1;
+    this.updateCount(-1);
+
     if(!cardList.count) {
       cardList.listElement.remove();
       delete this.list[card.id];
@@ -164,6 +189,7 @@ document.getElementById('build-options').addEventListener('submit', (e) => {
 
   getAPIResults(`f:modern ${searchTerm}`)
   .then((apiList) => {
+    console.log(apiList);
     apiList.forEach((cardData) => {
       const newCard = new Card(cardData, {
         handlers: {
