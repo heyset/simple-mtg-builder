@@ -120,6 +120,14 @@ class Deck {
   constructor(htmlElement) {
     this.htmlElement = htmlElement;
     this.listElement = this.htmlElement.querySelector('#deck-list');
+    this.countElement = this.htmlElement.querySelector('#count');
+    this.deckTitleElement = this.htmlElement.querySelector('#deck-title');
+
+    this.deckTitleElement.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.target.blur();
+      }
+    })
   }
 
   addCard(card) {
@@ -151,6 +159,7 @@ class Deck {
 
   updateCount(delta) {
     this.count += delta;
+    this.countElement.innerText = this.count;
   }
 
   clear() {
@@ -193,7 +202,6 @@ document.getElementById('build-options').addEventListener('submit', (e) => {
 
   getAPIResults(`f:modern ${searchTerm}`)
   .then((apiList) => {
-    console.log(apiList);
     apiList.forEach((cardData) => {
       const newCard = new Card(cardData, {
         handlers: {

@@ -33,12 +33,12 @@ a:hover {
   color: rgb(160, 160, 210);
 }
 
-header {
+.main-header {
   padding: 40px 0;
   text-align: center;
 }
 
-header h1 {
+.main-header h1 {
   font-weight: 400;
   text-transform: uppercase;
   font-size: 2.5rem;
@@ -56,11 +56,32 @@ main {
   flex: 1;
 }
 
+#deck header > * {
+  margin-bottom: 18px;
+}
+
+#deck header > input {
+  background-color: transparent;
+  color: #efefef;
+  border: none;
+  font-size: 1.75rem;
+  padding: 12px;
+}
+
+#deck header > input:focus {
+  font-style: italic;
+}
+
+#deck header > h3 {
+  font-weight: 400;
+}
+
 #deck-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
+
 
 #deck-list > li > ul {
   list-style: none;

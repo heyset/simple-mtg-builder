@@ -9,13 +9,16 @@
   <title>Simple MTG Deck Builder</title>
 </head>
 <body>
-  <header>
+  <header class="main-header">
     <h1>Simple MTG Deck Builder</h1>
   </header>
 
   <main>
     <section id="deck">
-      <h1>My Deck</h1>
+      <header>
+        <input id="deck-title" type="text" value="My Deck">
+        <h3>Total: <span id="count">0</span></h3>
+      </header>
       <section id="deck-options"></section>
       <ol id="deck-list"></ol>
     </section>
