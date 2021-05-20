@@ -213,7 +213,7 @@ ol {
   display: none;
   align-items: center;
   justify-content: center;
-  z-index: 10;
+  z-index: 200;
 }
 
 #modal.visible {
@@ -224,12 +224,12 @@ ol {
   position: absolute;
   width: 100%;
   padding: 100%;
-  z-index: 11;
+  z-index: 1;
 }
 
 #modal > img {
   height: 70%;
-  z-index: 12;
+  z-index: 2;
 }
 
 footer {
