@@ -51,6 +51,18 @@ class Card {
   }
 
   constructor(data, options) {
+    if (options) {
+      this.handlers = options.handlers;
+    }
+
+    if (options && options.prebuilt) {
+      this.name = options.prebuilt.name;
+      this.id = options.prebuilt.id;
+      this.images = options.prebuilt.images;
+      this.isBasicLand = options.prebuilt.isBasicLand;
+      return;
+    }
+
     const { image_uris, name, id, type_line } = data;
     this.name = name;
     this.id = id;
@@ -60,10 +72,6 @@ class Card {
     }
 
     if (!image_uris) return;
-
-    if (options) {
-      this.handlers = options.handlers;
-    }
 
     this.images = [image_uris.small, image_uris.png];
   }
@@ -168,7 +176,36 @@ class Deck {
     this.listElement.innerHTML = '';
   }
 
-  renderSublist({id, name}) {
+  getPlainList() {
+    let plainText = '';
+
+    Object.values(this.list).forEach((cardListing) => {
+      plainText += `${cardListing.count}x ${cardListing.card.name}\r\n`;
+    });
+
+    return plainText;
+  }
+
+  getDataArray() {
+    const deckArray = [];
+    
+    Object.values(this.list).forEach((cardListing) => {
+      deckArray.push({
+        count: cardListing.count,
+        cardData: {
+          name: cardListing.card.name,
+          id: cardListing.card.id,
+          images: cardListing.card.images,
+          isBasicLand: cardListing.card.isBasicLand,
+        },
+      });
+    });
+    
+    return deckArray;
+  }
+
+  renderSublist(card) {
+    const { id, name } = card;
     const listElement = document.createElement('li');
     const subList = document.createElement('ul');
 
@@ -179,7 +216,7 @@ class Deck {
 
     listElement.appendChild(subList);
     listElement.appendChild(cardDescriptionElement);
-    this.list[id] = { listElement, subList, count: 0, countElement, name }
+    this.list[id] = { listElement, subList, count: 0, countElement, card }
 
     this.listElement.appendChild(listElement);
   }
@@ -212,6 +249,36 @@ deckOptionsElement.querySelectorAll('#list-style input[type="radio"]').forEach((
     deck.changeListStyle(radio.value);
   });
 });
+
+function downloadFile(name, textFileFormat, content) {
+  let encoding = textFileFormat;
+  console.log(content);
+
+  if (textFileFormat === 'txt') {
+    encoding = 'plain';
+  }
+
+  const fileContent = `data:text/${encoding};charset=base64, ${content}`;
+  const downloadAnchor = document.createElement('a');
+  downloadAnchor.setAttribute('href', fileContent);
+  downloadAnchor.setAttribute('download', `${name}.${textFileFormat}`);
+
+  document.body.appendChild(downloadAnchor);
+  downloadAnchor.click();
+  downloadAnchor.remove();
+}
+
+deckOptionsElement.querySelector('#save-json').addEventListener('click', () => {
+  const array = deck.getDataArray();
+  
+  downloadFile('deck', 'json', JSON.stringify(array));
+});
+
+deckOptionsElement.querySelector('#save-text').addEventListener('click', () => {
+  const textContent = deck.getPlainList();
+
+  downloadFile('deck', 'txt', textContent);
+})
 
 document.getElementById('build-options').addEventListener('submit', (e) => {
   e.preventDefault();

@@ -112,13 +112,14 @@ main {
 #deck-options {
   display: flex;
   margin-bottom: 24px;
+  gap: 12px;
 }
 
 #deck-options fieldset {
   padding: 20px 15px;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  height: min-content;
   gap: 12px;
 }
 
