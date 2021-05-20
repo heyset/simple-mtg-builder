@@ -134,7 +134,7 @@ class Deck {
     const cardElement = card.render('deckList');
 
     if (!this.list[card.id]) {
-      this.renderSublist(card.id);
+      this.renderSublist(card);
     }
 
     const cardList = this.list[card.id];
@@ -153,6 +153,7 @@ class Deck {
     cardElement.style.left = `${(cardList.count - row * 8) * 24}px`;
     cardElement.style.top = `${row * 12}px`;
     cardList.subList.style.height = `${204 + row * 12}px`;
+    cardList.countElement.innerText = cardList.count;
 
     cardList.subList.appendChild(cardElement);
   }
@@ -167,12 +168,18 @@ class Deck {
     this.listElement.innerHTML = '';
   }
 
-  renderSublist(id) {
+  renderSublist({id, name}) {
     const listElement = document.createElement('li');
     const subList = document.createElement('ul');
 
+    const cardDescriptionElement = document.createElement('span');
+    cardDescriptionElement.innerHTML = `<span class="list-count">0</span>x ${name}`;
+
+    const countElement = cardDescriptionElement.querySelector('.list-count');
+
     listElement.appendChild(subList);
-    this.list[id] = { listElement, subList, count: 0 }
+    listElement.appendChild(cardDescriptionElement);
+    this.list[id] = { listElement, subList, count: 0, countElement, name }
 
     this.listElement.appendChild(listElement);
   }
@@ -183,15 +190,28 @@ class Deck {
     cardList.subList.lastChild.remove();
     cardList.count -= 1;
     this.updateCount(-1);
+    cardList.countElement.innerText = cardList.count;
 
     if(!cardList.count) {
       cardList.listElement.remove();
       delete this.list[card.id];
     }
   }
+
+  changeListStyle(style) {
+    this.listElement.className = `show-${style}`;
+  }
 }
 
 const deck = new Deck(document.getElementById('deck'));
+
+const deckOptionsElement = document.getElementById('deck-options');
+
+deckOptionsElement.querySelectorAll('#list-style input[type="radio"]').forEach((radio) => {
+  radio.addEventListener('change', () => {
+    deck.changeListStyle(radio.value);
+  });
+});
 
 document.getElementById('build-options').addEventListener('submit', (e) => {
   e.preventDefault();

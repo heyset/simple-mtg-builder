@@ -19,8 +19,20 @@
         <input id="deck-title" type="text" value="My Deck">
         <h3>Total: <span id="count">0</span></h3>
       </header>
-      <section id="deck-options"></section>
-      <ol id="deck-list"></ol>
+      <section id="deck-options">
+        <fieldset id="list-style">
+          <legend>List Style</legend>
+          <label>
+            <input type="radio" name="list-style" value="images" checked>
+            Images
+          </label>
+          <label>
+            <input type="radio" name="list-style" value="text">
+            Text
+          </label>
+        </fieldset>
+      </section>
+      <ol class="show-images" id="deck-list"></ol>
     </section>
     <section id="build">
       <form id="build-options">
