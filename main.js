@@ -174,6 +174,8 @@ class Deck {
   clear() {
     this.updateCount(this.count * -1);
     this.listElement.innerHTML = '';
+    this.list = {};
+    console.log(this);
   }
 
   getPlainList() {
@@ -250,17 +252,24 @@ deckOptionsElement.querySelectorAll('#list-style input[type="radio"]').forEach((
   });
 });
 
+let downloadFileUrl = null;
+
 function downloadFile(name, textFileFormat, content) {
   let encoding = textFileFormat;
-  console.log(content);
 
   if (textFileFormat === 'txt') {
     encoding = 'plain';
   }
 
-  const fileContent = `data:text/${encoding};charset=base64, ${content}`;
+  const data = new Blob([content], {type: `text/${encoding}`});
+  
+  if (downloadFile) {
+    window.URL.revokeObjectURL(downloadFile);
+  }
+
+  downloadFile = window.URL.createObjectURL(data);
   const downloadAnchor = document.createElement('a');
-  downloadAnchor.setAttribute('href', fileContent);
+  downloadAnchor.setAttribute('href', downloadFile);
   downloadAnchor.setAttribute('download', `${name}.${textFileFormat}`);
 
   document.body.appendChild(downloadAnchor);
@@ -278,6 +287,10 @@ deckOptionsElement.querySelector('#save-text').addEventListener('click', () => {
   const textContent = deck.getPlainList();
 
   downloadFile('deck', 'txt', textContent);
+});
+
+deckOptionsElement.querySelector('#clear-deck').addEventListener('click', () => {
+  deck.clear();
 })
 
 document.getElementById('build-options').addEventListener('submit', (e) => {
