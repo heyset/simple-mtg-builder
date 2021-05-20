@@ -1,7 +1,7 @@
 const baseUrl = 'https://api.scryfall.com/cards'
 const testId = '2036745a-09ea-476f-ace6-1d06b8502f83';
 
-const buildResults = document.getElementById('build-results');
+const searchResults = document.getElementById('search-results');
 
 class Card {
   constructor(data, type) {
@@ -42,6 +42,6 @@ getAPIResults('color=blue')
   console.log(apiList);
   apiList.forEach((cardData) => {
     const newCard = new Card(cardData);
-    buildResults.appendChild(newCard.render());
+    searchResults.appendChild(newCard.render());
   });
 });
