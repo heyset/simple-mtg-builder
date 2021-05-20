@@ -9,15 +9,41 @@
   <title>Simple MTG Deck Builder</title>
 </head>
 <body>
-  <header>
+  <header class="main-header">
     <h1>Simple MTG Deck Builder</h1>
   </header>
 
   <main>
     <section id="deck">
-      <h1>My Deck</h1>
-      <section id="deck-options"></section>
-      <ol id="deck-list"></ol>
+      <header>
+        <input id="deck-title" type="text" value="My Deck">
+        <h3>Total cards: <span id="count">0</span></h3>
+      </header>
+      <section id="deck-options">
+        <fieldset id="list-style">
+          <legend>List Style</legend>
+          <label>
+            <input type="radio" name="list-style" value="images" checked>
+            Images
+          </label>
+          <label>
+            <input type="radio" name="list-style" value="text">
+            Text
+          </label>
+        </fieldset>
+
+        <fieldset id="manage">
+          <legend>Manage Deck</legend>
+          <button id="save-text">Save .txt</button>
+          <button id="save-json">Save .json</button>
+          <form id="load-file">
+            <input type="file" id="json-file" accept=".json">
+            <button type="submit">Load from .json</button>
+          </form>
+          <button id="clear-deck">Clear</button>
+        </fieldset>
+      </section>
+      <ol class="show-images" id="deck-list"></ol>
     </section>
     <section id="build">
       <form id="build-options">
