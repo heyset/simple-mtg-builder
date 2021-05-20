@@ -1,15 +1,21 @@
 const baseUrl = 'https://api.scryfall.com/cards'
-const testId = '2036745a-09ea-476f-ace6-1d06b8502f83';
 
-const searchResults = document.getElementById('search-results');
+const searchResultsElement = document.getElementById('search-results');
+
+// <li class="status-text">Your search results will appear here.</li>
 
 class Card {
-  constructor(data, type) {
+  constructor(data, options) {
     const { image_uris, name } = data;
     this.name = name;
     if (!image_uris) return;
+    this.modal = options.modal;
 
-    this.images = [image_uris.small, image_uris.large];
+    this.images = [image_uris.small, image_uris.png];
+  }
+
+  enlarge() {
+
   }
 
   render() {
@@ -18,7 +24,8 @@ class Card {
     }
 
     const listElement = document.createElement('li');
-    listElement.dataset.largerUrl = this.images[1];
+    listElement.className = 'card';
+    listElement.dataset.largepng = this.images[1];
     listElement.innerHTML = `<img src=${this.images[0]} alt="${this.name}" />`;
     this.htmlElement = listElement;
     return this.htmlElement;
@@ -35,13 +42,25 @@ function getAPIResults(searchTerm) {
   })
 }
 
-document.querySelector('.status-text').style.display = 'none';
+function clearSearchResults() {
+  searchResultsElement.innerHTML = '';
+}
 
-getAPIResults('color=blue')
-.then((apiList) => {
-  console.log(apiList);
-  apiList.forEach((cardData) => {
-    const newCard = new Card(cardData);
-    searchResults.appendChild(newCard.render());
+const searchFieldElement = document.getElementById('search-field');
+
+document.getElementById('build-options').addEventListener('submit', (e) => {
+  e.preventDefault();
+  if (!searchFieldElement.value) return;
+
+  clearSearchResults();
+  const searchTerm = searchFieldElement.value;
+
+  getAPIResults(searchTerm)
+  .then((apiList) => {
+    apiList.forEach((cardData) => {
+      const newCard = new Card(cardData);
+      searchResultsElement.appendChild(newCard.render());
+    });
   });
-});
+})
+

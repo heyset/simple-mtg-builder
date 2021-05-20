@@ -14,21 +14,31 @@
   </header>
 
   <main>
-    <section id="build">
-      <section id="build-options"></section>
-      <h2>Click to enlarge, double-click to add.</h2>
-      <ol id="search-results"></ol>
-    </section>
     <section id="deck">
+      <h1>My Deck</h1>
       <section id="deck-options"></section>
-      <ol id="deck-list">
-        <li class="status-text">Your results will appear here.</li>
-      </ol>
+      <ol id="deck-list"></ol>
+    </section>
+    <section id="build">
+      <form id="build-options">
+        <input id="search-field" type="text" placeholder="Search for cards">
+        <p>Search using <a target="_blank" href="https://scryfall.com/docs/syntax">Scryfall's powerful search syntax</a></p>
+        <button type="submit">Search</button>
+      </form>
+      <h2>Right click a card to add it to the deck, left click to enlarge it.</h2>
+      <ol id="search-results"></ol>
     </section>
   </main>
 
+  <aside id="modal">
+    <div id="backdrop"></div>
+    <img src="https://c1.scryfall.com/file/scryfall-cards/png/front/9/1/9131361b-ec1e-4390-82c9-b9b9f77792a8.png?1562559963" alt="Enlarged card">
+  </aside>
+
   <footer>
     <p>Created by <a target="_blank" href="https://github.com/heyset">Matheus "Set" Inacio</a>, 2021</p>
+    <p>This app uses the <a target="_blank" href="https://scryfall.com/docs/api">Scryfall API</a>.</p>
+    <p>All Magic: The Gathering&#169; imagery - cards, symbols, etc - are copyright of Wizards of the Coast.</p>
   </footer>
   <script src="./main.js"></script>
 </body>
