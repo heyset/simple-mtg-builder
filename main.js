@@ -2,7 +2,9 @@ const baseUrl = 'https://api.scryfall.com/cards'
 
 const searchResultsElement = document.getElementById('search-results');
 
-// <li class="status-text">Your search results will appear here.</li>
+function clearSearchResults() {
+  searchResultsElement.innerHTML = '';
+}
 
 class Modal {
   constructor(htmlElement) {
@@ -24,20 +26,21 @@ class Modal {
   }
 }
 
-const modal = new Modal(document.getElementById('modal'));
-
 class Card {
   constructor(data, options) {
     const { image_uris, name } = data;
     this.name = name;
     if (!image_uris) return;
-    this.modal = options.modal;
+
+    if (options) {
+      this.handlers = options.handlers;
+    }
 
     this.images = [image_uris.small, image_uris.png];
   }
 
-  enlarge() {
-    this.modal.show(this.images[1]);
+  handleLeftClick() {
+    this.handlers.leftClick(this);
   }
 
   render() {
@@ -47,9 +50,8 @@ class Card {
 
     const listElement = document.createElement('li');
     listElement.className = 'card';
-    listElement.dataset.largepng = this.images[1];
     listElement.innerHTML = `<img src=${this.images[0]} alt="${this.name}" />`;
-    listElement.addEventListener('click', this.enlarge.bind(this));
+    listElement.addEventListener('click', this.handleLeftClick.bind(this));
     this.htmlElement = listElement;
     return this.htmlElement;
   }
@@ -65,11 +67,13 @@ function getAPIResults(searchTerm) {
   })
 }
 
-function clearSearchResults() {
-  searchResultsElement.innerHTML = '';
-}
-
 const searchFieldElement = document.getElementById('search-field');
+
+const modal = new Modal(document.getElementById('modal'));
+
+function enlargeCard(card) {
+  modal.show(card.images[1]);
+}
 
 document.getElementById('build-options').addEventListener('submit', (e) => {
   e.preventDefault();
@@ -81,7 +85,7 @@ document.getElementById('build-options').addEventListener('submit', (e) => {
   getAPIResults(searchTerm)
   .then((apiList) => {
     apiList.forEach((cardData) => {
-      const newCard = new Card(cardData, { modal });
+      const newCard = new Card(cardData, { handlers: {leftClick: enlargeCard} });
       searchResultsElement.appendChild(newCard.render());
     });
   });
