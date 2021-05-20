@@ -6,6 +6,6 @@
 ![Image preview of the app](preview/preview_01.png)
 
 
-The app can export the decks to plain text files, as well as saving them to .json files which can later be opened by it to further editing.
+The app can export the decks to plain text files, as well as saving them to .json files which can later be opened by it for further editing.
 
 ![Image preview of the text files generated](preview/preview_save.png)
